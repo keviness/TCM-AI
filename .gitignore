@@ -25,3 +25,5 @@ Model
 *.pkl
 *.bin
 *.safetensors
+BERTModel
+*.pth
