@@ -212,7 +212,7 @@ class BERTPredictor:
             return_tensors='pt',
             padding=True,
             truncation=True,
-            max_length=200
+            max_length=100
         )
         input_ids = inputs['input_ids']
         attention_mask = inputs['attention_mask']
@@ -227,8 +227,9 @@ class BERTPredictor:
             return predictions
 
 def ReadExcelData(ExcelPath, tokenizer):
-    data = pd.read_excel(ExcelPath)
-    texts = data['description'].values.tolist()
+    data = pd.read_excel(ExcelPath, sheet_name='BianZheng').iloc[:1000,:]  # 修改为取前1000行数据
+    #print("data:",data)
+    texts = data['detection'].values.tolist()
     labels = data['syndrome'].values
 
     #print("texts:", type(texts))
@@ -264,7 +265,7 @@ def ReadExcelData(ExcelPath, tokenizer):
     # 创建数据集和数据加载器
     dataset = TextDataset(input_ids, attention_mask, multi_labels)
     #print("dataset:",dataset)
-    dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=10, shuffle=True)
     
     return dataloader, num_labels, featureList
 
@@ -272,7 +273,7 @@ def ReadExcelData(ExcelPath, tokenizer):
 if __name__ == "__main__":
     
     # 准备数据
-    ExcelPath = 'C:/Users/gst-0123/Desktop/Projects/GSTAIProgect/TCM-ERNIE/Data/trainBianZheng.xlsx'
+    ExcelPath = 'C:/Users/gst-0123/Desktop/Projects/中医诊断AI/TCM-ERNIE/Data/trainBianZheng.xlsx'
     tokenizer = BertTokenizer.from_pretrained(UNCASED)
     dataloader, num_labels, featureList = ReadExcelData(ExcelPath, tokenizer)
     print("num_labels:",num_labels)
@@ -317,4 +318,3 @@ if __name__ == "__main__":
 
     #ResultList = [featureList[i] for i in range(len(predicted_labels)) if predicted_labels[i] == 1]
     #print("Predicted labels: ",[featureList[i] for i in range(len(predicted_labels)) if predicted_labels[i] == 1])
-    
