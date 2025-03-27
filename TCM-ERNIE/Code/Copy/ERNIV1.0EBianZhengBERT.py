@@ -284,7 +284,7 @@ if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     
-    trainer = BERTTrainer(model, device, num_epochs=10, batch_size=10)
+    trainer = BERTTrainer(model, device, num_epochs=5, batch_size=10)
     predictor = BERTPredictor(model, tokenizer)
     
     # 训练模型
