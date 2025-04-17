@@ -27,3 +27,5 @@ Model
 *.safetensors
 BERTModel
 *.pth
+*.h5
+py12306
