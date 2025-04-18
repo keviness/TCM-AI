@@ -29,3 +29,4 @@ BERTModel
 *.pth
 *.h5
 *.ckpt
+*.bat
