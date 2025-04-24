@@ -248,7 +248,7 @@ class Calculator():
         # 运行主循环
         self.root.mainloop()
     
-        
+
 if __name__ == '__main__':
     #print(__doc__)
     calculator = Calculator()
