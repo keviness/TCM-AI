@@ -27,6 +27,7 @@ Model
 *.safetensors
 BERTModel
 *.pth
+*.pt
 *.h5
 *.ckpt
 *.mat

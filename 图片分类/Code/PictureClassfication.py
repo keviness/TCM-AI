@@ -4,6 +4,7 @@ import torch.optim as optim
 from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from tqdm import tqdm  # 新增
+import os  # 新增
 
 dataPath = 'C:/Users/gst-0123/Desktop/Projects/中医诊断AI/图片分类/Result'  # 数据集路径
 
@@ -32,6 +33,12 @@ model = model.to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
+# 新增：保存最佳模型相关变量
+best_acc = 0.0
+cache_dir = "C:/Users/gst-0123/Desktop/Projects/中医诊断AI/图片分类/Cache"
+os.makedirs(cache_dir, exist_ok=True)
+best_model_path = os.path.join(cache_dir, 'best_model.pkl')
+
 # 4. 训练模型
 num_epochs = 2  # 只训练2轮做演示
 for epoch in range(num_epochs):
@@ -56,7 +63,7 @@ for epoch in range(num_epochs):
         train_loader_tqdm.set_postfix({'Loss': f'{train_loss:.4f}', 'Acc': f'{train_acc:.4f}'})
     print(f"Epoch {epoch+1} finished. Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f}")
 
-    # 测试模型
+    # 验证模型
     model.eval()
     test_loss = 0.0
     correct = 0
@@ -75,3 +82,9 @@ for epoch in range(num_epochs):
             avg_test_loss = test_loss / total if total > 0 else 0
             test_loader_tqdm.set_postfix({'Loss': f'{avg_test_loss:.4f}', 'Acc': f'{test_acc:.4f}'})
     print(f"Test Loss: {avg_test_loss:.4f}, Test Acc: {test_acc:.4f}")
+
+    # 新增：保存最佳模型
+    if test_acc > best_acc:
+        best_acc = test_acc
+        torch.save(model.state_dict(), best_model_path)
+        print(f"Best model saved with acc: {best_acc:.4f} at {best_model_path}")
