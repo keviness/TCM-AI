@@ -7,8 +7,8 @@ from tqdm import tqdm
 import os
 
 # 配置参数
-dataPath = 'C:/Users/gst-0123/Desktop/Projects/中医诊断AI/图片分类/Result'
-cache_dir = "C:/Users/gst-0123/Desktop/Projects/中医诊断AI/图片分类/Cache"
+dataPath = 'C:/Users/gst-0123/Desktop/Projects/中医诊断AI/图片分类/花卉图片分类/Result'
+cache_dir = "C:/Users/gst-0123/Desktop/Projects/中医诊断AI/图片分类/花卉图片分类/Cache"
 os.makedirs(cache_dir, exist_ok=True)
 best_model_path = os.path.join(cache_dir, 'best_model.pkl')
 num_epochs = 3
