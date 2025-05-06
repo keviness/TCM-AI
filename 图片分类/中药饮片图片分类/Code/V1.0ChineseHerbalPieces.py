@@ -8,6 +8,8 @@ import os
 from PIL import Image
 import matplotlib.pyplot as plt
 
+plt.rcParams['font.family'] = 'Microsoft YaHei'  # 设置全局字体为微软雅黑
+
 # 配置参数
 dataPath = 'C:/Users/gst-0123/Desktop/Projects/中医诊断AI/图片分类/中药饮片图片分类/Data/DataLoad'
 cache_dir = "C:/Users/gst-0123/Desktop/Projects/中医诊断AI/图片分类/中药饮片图片分类/Data/Cache"
