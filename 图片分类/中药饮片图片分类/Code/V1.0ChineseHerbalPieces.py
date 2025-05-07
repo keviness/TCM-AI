@@ -21,6 +21,19 @@ img_size = (128, 128)
 lr = 0.001
 
 def get_data_loaders(data_path, img_size, batch_size):
+    """
+    加载训练集和验证集的数据加载器。
+
+    参数:
+        data_path (str): 数据集根目录路径，需包含'train'和'valid'子目录。
+        img_size (tuple): 图像缩放尺寸，如(128, 128)。
+        batch_size (int): 每个batch的图片数量。
+
+    返回:
+        train_loader (DataLoader): 训练集加载器。
+        valid_loader (DataLoader): 验证集加载器。
+        train_dataset (Dataset): 训练集数据集对象（用于获取类别名）。
+    """
     # 定义图像预处理方式
     transform = transforms.Compose([
         transforms.Resize(img_size),
@@ -35,6 +48,16 @@ def get_data_loaders(data_path, img_size, batch_size):
     return train_loader, valid_loader, train_dataset
 
 def build_model(num_classes, device):
+    """
+    构建并返回一个适配类别数的ResNet18模型。
+
+    参数:
+        num_classes (int): 分类类别数。
+        device (torch.device): 设备对象（cpu或cuda）。
+
+    返回:
+        model (nn.Module): 已转移到指定设备的模型。
+    """
     # 加载预训练的ResNet18模型
     model = models.resnet18(pretrained=True)
     num_ftrs = model.fc.in_features
@@ -43,7 +66,20 @@ def build_model(num_classes, device):
     return model.to(device)
 
 def train_one_epoch(model, loader, criterion, optimizer, device):
-    # 单个epoch的训练过程
+    """
+    单个epoch的训练过程。
+
+    参数:
+        model (nn.Module): 要训练的模型。
+        loader (DataLoader): 训练数据加载器。
+        criterion (nn.Module): 损失函数。
+        optimizer (Optimizer): 优化器。
+        device (torch.device): 设备对象。
+
+    返回:
+        train_loss (float): 当前epoch的平均损失。
+        train_acc (float): 当前epoch的准确率。
+    """
     model.train()
     running_loss, correct, total = 0.0, 0, 0
     loader_tqdm = tqdm(loader)
@@ -64,7 +100,19 @@ def train_one_epoch(model, loader, criterion, optimizer, device):
     return train_loss, train_acc
 
 def validate(model, loader, criterion, device):
-    # 验证过程
+    """
+    在验证集上评估模型性能。
+
+    参数:
+        model (nn.Module): 要评估的模型。
+        loader (DataLoader): 验证数据加载器。
+        criterion (nn.Module): 损失函数。
+        device (torch.device): 设备对象。
+
+    返回:
+        avg_test_loss (float): 验证集平均损失。
+        test_acc (float): 验证集准确率。
+    """
     model.eval()
     test_loss, correct, total = 0.0, 0, 0
     loader_tqdm = tqdm(loader)
@@ -83,7 +131,19 @@ def validate(model, loader, criterion, device):
     return avg_test_loss, test_acc
 
 def train_model(model, train_loader, valid_loader, criterion, optimizer, device, num_epochs, best_model_path):
-    # 训练主循环，包含保存最优模型
+    """
+    训练主循环，包含保存最优模型。
+
+    参数:
+        model (nn.Module): 要训练的模型。
+        train_loader (DataLoader): 训练集加载器。
+        valid_loader (DataLoader): 验证集加载器。
+        criterion (nn.Module): 损失函数。
+        optimizer (Optimizer): 优化器。
+        device (torch.device): 设备对象。
+        num_epochs (int): 训练轮数。
+        best_model_path (str): 最优模型保存路径。
+    """
     best_acc = 0.0
     for epoch in range(num_epochs):
         print(f"Epoch {epoch+1}/{num_epochs}")
@@ -97,7 +157,19 @@ def train_model(model, train_loader, valid_loader, criterion, optimizer, device,
             print(f"Best model saved with acc: {best_acc:.4f} at {best_model_path}")
 
 def predict_image(model, image_path, class_names, device, img_size):
-    # 对单张图片进行预测
+    """
+    对单张图片进行预测。
+
+    参数:
+        model (nn.Module): 已训练好的模型。
+        image_path (str): 图片路径。
+        class_names (list): 类别名称列表。
+        device (torch.device): 设备对象。
+        img_size (tuple): 图像缩放尺寸。
+
+    返回:
+        pred_class (str): 预测类别名称。
+    """
     model.eval()
     transform = transforms.Compose([
         transforms.Resize(img_size),
@@ -112,7 +184,17 @@ def predict_image(model, image_path, class_names, device, img_size):
     return pred_class
 
 def load_model(model_path, num_classes, device):
-    # 加载保存的模型权重
+    """
+    加载保存的模型权重。
+
+    参数:
+        model_path (str): 已保存模型权重文件路径。
+        num_classes (int): 分类类别数。
+        device (torch.device): 设备对象。
+
+    返回:
+        model (nn.Module): 加载权重后的模型。
+    """
     model = models.resnet18(pretrained=False)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, num_classes)
@@ -122,7 +204,9 @@ def load_model(model_path, num_classes, device):
     return model
 
 def main():
-    # 主函数，初始化设备、数据、模型和训练
+    """
+    主函数，初始化设备、数据、模型和训练流程。
+    """
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     train_loader, valid_loader, train_dataset = get_data_loaders(dataPath, img_size, batch_size)
     class_names = train_dataset.classes
