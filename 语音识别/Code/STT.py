@@ -1,15 +1,18 @@
 # tts demo
-from melo_onnx import MeloTTX_ONNX
+from melo_onnx import MeloTTS_ONNX
 import soundfile
 
-model_path = "path/to/folder/of/model_tts"
-tts = MeloTTX_ONNX(model_path)
+outputPath = "C:/Users/gst-0123/Desktop/Projects/中医诊断AI/语音识别/Result"
+
+model_path = "C:/Users/gst-0123/Desktop/Projects/中医诊断AI/语音识别/Model"
+tts = MeloTTS_ONNX(model_path)
 audio = tts.speak("今天天气真nice。", tts.speakers[0])
 
-soundfile.write("path/of/result.wav", audio, samplerate=tts.sample_rate)
+soundfile.write(f"{outputPath}/result.wav", audio, samplerate=tts.sample_rate)
 
-
-#         optimizer (torch.optim.Optimizer): 优化器。
+# 音色克隆
+"""
+# optimizer (torch.optim.Optimizer): 优化器。
 # Tone clone demo
 from melo_onnx import OpenVoiceToneClone_ONNX
 tc = OpenVoiceToneClone_ONNX("path/to/folder/of/model_tone_clone")
@@ -21,3 +24,4 @@ src = soundfile.read("path/of/audio_to_change_tone", dtype='float32')
 src = tc.resample(src[0], src[1])
 result = tc.tone_clone(src, tgt_tone_color)
 soundfile.write("path/of/result.wav", result, tc.sample_rate)
+"""
