@@ -126,7 +126,7 @@ def get_tokenized_dataset(tokenizer):
     tokenized_dataset = formatted_dataset.map(
         lambda x: tokenize_function(x, tokenizer),
         batched=True,
-        remove_columns=formatted_dataset["train"].column_names
+        remove_columns = formatted_dataset["train"].column_names
     )
     return tokenized_dataset
 
