@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt  # 可视化库
 RECORD_DURATION = 5  # 录音时长(秒)
 SAMPLE_RATE = 44100  # 采样率
 MODEL_PATH = 'D:/ProjectOpenSource/中医诊断AI/音色体质判断/Model/tcm_model.pkl'  # 模型保存路径
-filename = 'D:/ProjectOpenSource/中医诊断AI/DeepSeek-LoRA/Data/patient_voice.wav'  # 录音文件名
+filename = 'D:/ProjectOpenSource/中医诊断AI/音色体质判断/Data/patient_voice.wav'  # 录音文件名
 
 # 中医体质类型映射（扩充至9种常见体质）
 TCM_TYPES = {
