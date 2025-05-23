@@ -2,13 +2,13 @@
 中医体质语音识别系统
 依赖库安装：pip install sounddevice librosa scikit-learn numpy matplotlib
 """
-import sounddevice as sd
-import numpy as np
-from scipy.io.wavfile import write
-import librosa
-import joblib
-from sklearn.ensemble import RandomForestClassifier
-import matplotlib.pyplot as plt
+import sounddevice as sd  # 语音录制库
+import numpy as np        # 数值计算库
+from scipy.io.wavfile import write  # 保存wav音频文件
+import librosa           # 音频特征提取库
+import joblib            # 模型保存与加载
+from sklearn.ensemble import RandomForestClassifier  # 随机森林分类器
+import matplotlib.pyplot as plt  # 可视化库
 
 # ================== 配置参数 ==================
 RECORD_DURATION = 5  # 录音时长(秒)
@@ -34,12 +34,15 @@ def record_audio(filename):
     """录制患者语音"""
     print(f"开始录音，请保持安静...（时长{RECORD_DURATION}秒）")
     try:
-        recording = sd.rec(int(RECORD_DURATION * SAMPLE_RATE),
-                          samplerate=SAMPLE_RATE, 
-                          channels=1,
-                          dtype='float32')
-        sd.wait()
-        write(filename, SAMPLE_RATE, recording)
+        # 录制音频，返回float32类型的numpy数组
+        recording = sd.rec(
+            int(RECORD_DURATION * SAMPLE_RATE),  # 总采样点数
+            samplerate=SAMPLE_RATE,              # 采样率
+            channels=1,                          # 单声道
+            dtype='float32'                      # 数据类型
+        )
+        sd.wait()  # 等待录音结束
+        write(filename, SAMPLE_RATE, recording)  # 保存为wav文件
         print(f"录音已保存至 {filename}")
         return True
     except Exception as e:
@@ -49,7 +52,7 @@ def record_audio(filename):
 def extract_features(file_path):
     """提取声学特征"""
     try:
-        y, sr = librosa.load(file_path, sr=SAMPLE_RATE)
+        y, sr = librosa.load(file_path, sr=SAMPLE_RATE)  # 加载音频，y为波形，sr为采样率
         # MFCC：梅尔频率倒谱系数，反映音色和语音特征
         mfcc = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13))
         # Pitch：基频，反映声音的高低
@@ -74,42 +77,39 @@ def extract_features(file_path):
         chroma_stft = np.mean(librosa.feature.chroma_stft(y=y, sr=sr))
         # Tonnetz：音调网络特征，反映音调关系
         tonnetz = np.mean(librosa.feature.tonnetz(y=librosa.effects.harmonic(y), sr=sr))
-        # 组合所有特征
+        # 组合所有特征为一个数组
         features = [
             mfcc, pitch, spectral_centroid, jitter, shimmer, hnr,
             zcr, spectral_bandwidth, spectral_contrast, rmse, chroma_stft, tonnetz
         ]
-        return np.array(features).reshape(1, -1)
+        return np.array(features).reshape(1, -1)  # 返回形状为(1, 特征数)的数组
     except Exception as e:
         print(f"特征提取失败: {str(e)}")
         return None
 
 def train_model():
     """训练示例模型（实际需替换真实数据）"""
-    # 示例数据（需替换为标注数据集）
-    X_train = np.random.rand(200, 12)  # 200个样本，6个特征
-    y_train = np.random.randint(0, 9, 200)  # 9种体质
-    
-    model = RandomForestClassifier(n_estimators=100)
-    model.fit(X_train, y_train)
-    joblib.dump(model, MODEL_PATH)
+    # 生成随机特征数据，实际应用需替换为真实标注数据
+    X_train = np.random.rand(200, 12)  # 200个样本，12个特征
+    y_train = np.random.randint(0, 9, 200)  # 9种体质标签
+    model = RandomForestClassifier(n_estimators=100)  # 创建随机森林分类器
+    model.fit(X_train, y_train)  # 拟合模型
+    joblib.dump(model, MODEL_PATH)  # 保存模型到本地
     print("示例模型已训练并保存")
 
 def predict_tcm(features):
     """中医体质预测"""
     try:
-        model = joblib.load(MODEL_PATH)
-        prediction = model.predict(features)
-        return TCM_TYPES.get(prediction[0], "未知体质")
+        model = joblib.load(MODEL_PATH)  # 加载训练好的模型
+        prediction = model.predict(features)  # 预测体质类型
+        return TCM_TYPES.get(prediction[0], "未知体质")  # 返回体质类型描述
     except Exception as e:
         print(f"预测失败: {str(e)}")
         return None
 
 # ================== 主程序 ==================
 if __name__ == "__main__":
-    # 首次运行需训练示例模型
-    train_model()  # 实际应用时应注释此行，使用专业训练的模型
-    
+    train_model()  # 首次运行需训练示例模型，实际应用时应注释此行
     # 1.录音采集
     if record_audio(filename):
         # 2.特征提取
@@ -120,10 +120,11 @@ if __name__ == "__main__":
             print("\n=== 诊断结果 ===")
             print(result)
             print("=================")
-            
+            '''
             # 示例特征可视化（可选）
             plt.bar(range(12), features.flatten())
             plt.title('声学特征分布')
             plt.xlabel('特征索引')
             plt.ylabel('归一化值')
             plt.show()
+            '''
