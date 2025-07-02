@@ -54,7 +54,8 @@ def collect_user_info():
 def medicated_diet_consult():
     user_input = collect_user_info()
     response = client.chat.completions.create(
-        model="deepseek-ai/DeepSeek-V2.5",
+        #model="deepseek-ai/DeepSeek-V2.5",
+        model="deepseek-ai/DeepSeek-R1-0528-Qwen3-8B",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_input}
